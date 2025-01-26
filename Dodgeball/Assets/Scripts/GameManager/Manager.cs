@@ -8,11 +8,11 @@ using UnityEngine.UI;
 public class Manager : MonoBehaviour
 {
     [SerializeField] private bool save;
+    [SerializeField] private bool trainSavedAgents;
     
     [SerializeField] private Text genText;
     
     private bool trainingStart;
-    private bool trainSavedAgents;
 
     public GameObject agentPrefab;
     public GameObject target;
@@ -24,7 +24,7 @@ public class Manager : MonoBehaviour
     private List<NeuralNetwork> nets;
     private List<Agent> agentList = null;
 
-    [SerializeField] private GameObject startBtn;
+    [SerializeField] private List<GameObject> userInterface;
 
     void Timer()
     {
@@ -84,7 +84,11 @@ public class Manager : MonoBehaviour
     public void StartTraining()
     {
         trainingStart = true;
-        startBtn.SetActive(false);
+
+        foreach(GameObject elemnet in userInterface)
+        {
+            elemnet.SetActive(false);
+        }
     }
 
     private void CreateAgentsFromSavedNetwork()
@@ -222,6 +226,11 @@ public class Manager : MonoBehaviour
 
     public void LoadAgent()
     {
+        foreach (GameObject elemnet in userInterface)
+        {
+            elemnet.SetActive(false);
+        }
+
         string filePath = Path.Combine(Application.persistentDataPath, "bestNeuralNetwork.json");
 
         if (!File.Exists(filePath))

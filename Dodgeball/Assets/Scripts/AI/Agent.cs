@@ -60,7 +60,16 @@ public class Agent : MonoBehaviour
             moveInput = Mathf.Clamp(output[0], 0f, 1f);
             turnInput = Mathf.Clamp(output[1], -1f, 1f);
 
-            float distanceFitness = (distance <= 10.0f) ? Mathf.Exp(-distance / 10.0f) : 0f;
+            float distanceFitness;
+            if (distance <= 20.0f)
+            {
+                distanceFitness = Mathf.Exp(-distance / 10.0f);
+            }
+            else
+            {
+                distanceFitness = -Mathf.Clamp01((distance - 20.0f) / 10.0f);
+            }
+
             net.AddFitness(1f - Mathf.Abs(inputs[0]) + distanceFitness);
 
             UpdateRotation();
