@@ -42,14 +42,11 @@ public class Agent : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, target.position);
 
-            // Calculate normalized inputs
             float angleToTarget = Vector3.SignedAngle(transform.forward, (target.position - transform.position).normalized, Vector3.up) / 180.0f;
-            float normalizedDistance = Mathf.Clamp01(distance / 10.0f); // Normalize distance to range [0, 1]
+            float normalizedDistance = Mathf.Clamp01(distance / 10.0f);
 
-            // Raycasting for 3x3 vision grid
             float[] vision = PerformRaycastVision();
 
-            // Combine inputs into neural network input array
             float[] inputs = new float[9];
             inputs[0] = angleToTarget;
             inputs[1] = normalizedDistance;
@@ -58,15 +55,12 @@ public class Agent : MonoBehaviour
                 inputs[i + 2] = vision[i];
             }
 
-            // Get outputs from neural network
             float[] output = net.FeedForward(inputs);
-            moveInput = output[0]; // Move forward/backward
-            turnInput = output[1]; // Rotate left/right
+            moveInput = output[0]; 
+            turnInput = output[1]; 
 
-            // Update fitness based on proximity to target
-            net.AddFitness(1.0f / (distance + 1.0f)); // Closer = higher fitness
+            net.AddFitness(1.0f / (distance + 1.0f)); 
 
-            // Apply movement and rotation
             UpdateRotation();
             UpdateMove();
         }
