@@ -77,7 +77,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
 
                 for (int k = 0; k < neuronsInPreviousLayer; k++)
                 {
-                    neuronWeights[k] = UnityEngine.Random.Range(-0.5f, 0.5f);
+                    neuronWeights[k] = UnityEngine.Random.Range(-1f, 1f);
                 }
 
                 layerWeightsList.Add(neuronWeights);

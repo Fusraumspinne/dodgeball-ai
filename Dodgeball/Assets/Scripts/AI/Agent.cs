@@ -38,28 +38,30 @@ public class Agent : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (initialized)
+        if(initialized)
         {
             float distance = Vector3.Distance(transform.position, target.position);
 
-            float angleToTarget = Vector3.SignedAngle(transform.forward, (target.position - transform.position).normalized, Vector3.up) / 180.0f;
-            float normalizedDistance = Mathf.Clamp01(distance / 10.0f);
+            float angleToTarget = Vector3.SignedAngle(transform.forward, (target.position - transform.position).normalized, Vector3.up);
+            angleToTarget /= 180.0f;
 
             float[] vision = PerformRaycastVision();
 
             float[] inputs = new float[9];
             inputs[0] = angleToTarget;
-            inputs[1] = normalizedDistance;
+            inputs[1] = Mathf.Clamp01(distance / 10.0f);
             for (int i = 0; i < vision.Length; i++)
             {
                 inputs[i + 2] = vision[i];
             }
 
             float[] output = net.FeedForward(inputs);
-            moveInput = output[0]; 
-            turnInput = output[1]; 
 
-            net.AddFitness(1.0f / (distance + 1.0f)); 
+            moveInput = Mathf.Clamp(output[0], 0f, 1f);
+            turnInput = Mathf.Clamp(output[1], -1f, 1f);
+
+            float distanceFitness = (distance <= 10.0f) ? Mathf.Exp(-distance / 10.0f) : 0f;
+            net.AddFitness(1f - Mathf.Abs(inputs[0]) + distanceFitness);
 
             UpdateRotation();
             UpdateMove();
@@ -112,7 +114,7 @@ public class Agent : MonoBehaviour
     {
         RaycastHit hit;
         float maxDistance = 10f;
-        int layerMask = ~LayerMask.GetMask("Agent");
+        int layerMask = ~LayerMask.GetMask("Agent", "Player");
 
         if (Physics.Raycast(transform.position, direction, out hit, maxDistance, layerMask))
         {

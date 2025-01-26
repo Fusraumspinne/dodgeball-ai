@@ -22,8 +22,9 @@ public class Manager : MonoBehaviour
     private int generationNumber = 0;
     private int[] layers = new int[] { 9, 20, 20, 2 };
     private List<NeuralNetwork> nets;
-    private bool leftMouseDown = false;
     private List<Agent> agentList = null;
+
+    [SerializeField] private GameObject startBtn;
 
     void Timer()
     {
@@ -77,30 +78,13 @@ public class Manager : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (leftMouseDown)
-            {
-                leftMouseDown = false;
-            }
-            else
-            {
-                leftMouseDown = true;
-            }
-        }
-
-        if (leftMouseDown == true)
-        {
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            target.transform.position = mousePosition;
-        }
-
         genText.text = "Generation: " + generationNumber.ToString();
     }
 
     public void StartTraining()
     {
         trainingStart = true;
+        startBtn.SetActive(false);
     }
 
     private void CreateAgentsFromSavedNetwork()

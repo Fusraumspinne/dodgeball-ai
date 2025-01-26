@@ -6,7 +6,6 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] Transform playerCamera;
     [SerializeField][Range(0.0f, 0.5f)] float mouseSmoothTime = 0.03f;
-    [SerializeField] bool cursorLock = true;
     [SerializeField] float mouseSensitivity = 3.5f;
     [SerializeField] float Speed = 6.0f;
     [SerializeField][Range(0.0f, 0.5f)] float moveSmoothTime = 0.3f;
@@ -27,15 +26,14 @@ public class Movement : MonoBehaviour
     Vector2 currentDirVelocity;
     Vector3 velocity;
 
+    [SerializeField] private bool isPaused;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
 
-        if (cursorLock)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = true;
-        }
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = true;
     }
 
     void Update()
@@ -45,15 +43,17 @@ public class Movement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Cursor.visible)
+            if (isPaused)
             {
-                Cursor.lockState = CursorLockMode.None;
+                Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                isPaused = false;
             }
             else
             {
-                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                isPaused = true;
             }
         }
     }
