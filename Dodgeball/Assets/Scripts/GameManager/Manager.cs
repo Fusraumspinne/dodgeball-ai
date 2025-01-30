@@ -20,7 +20,7 @@ public class Manager : MonoBehaviour
     private bool isTraining = false;
     public int populationSize;
     private int generationNumber = 0;
-    private int[] layers = new int[] { 9, 20, 20, 2 };
+    private int[] layers = new int[] { 11, 20, 20, 2 };
     private List<NeuralNetwork> nets;
     private List<Agent> agentList = null;
 
@@ -103,7 +103,7 @@ public class Manager : MonoBehaviour
         string json = File.ReadAllText(filePath);
         SavedNetwork savedNetwork = JsonUtility.FromJson<SavedNetwork>(json);
 
-        int[] layers = { 9, 20, 20, 2 };
+        int[] layers = { 11, 20, 20, 2 };
         NeuralNetwork reconstructedNetwork = new NeuralNetwork(layers);
 
         float[][][] weights = new float[savedNetwork.layerArrays.Length][][];
@@ -241,7 +241,7 @@ public class Manager : MonoBehaviour
         string json = File.ReadAllText(filePath);
         SavedNetwork savedNetwork = JsonUtility.FromJson<SavedNetwork>(json);
 
-        int[] layers = { 9, 20, 20, 2 };
+        int[] layers = { 11, 20, 20, 2 };
         NeuralNetwork reconstructedNetwork = new NeuralNetwork(layers);
 
         float[][][] weights = new float[savedNetwork.layerArrays.Length][][];

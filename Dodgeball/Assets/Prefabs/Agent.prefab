@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: -6946060996659376316}
   m_Layer: 6
   m_Name: Agent
-  m_TagString: Untagged
+  m_TagString: Agent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSmoothTime: 0.03
   mouseSensitivity: 2
-  speed: 6
+  speed: 9
   moveSmoothTime: 0.3
   gravity: -20
   groundCheck: {fileID: 1325272585845464764}

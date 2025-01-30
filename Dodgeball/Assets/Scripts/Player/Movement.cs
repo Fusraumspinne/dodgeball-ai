@@ -28,6 +28,10 @@ public class Movement : MonoBehaviour
 
     [SerializeField] private bool isPaused;
 
+    [SerializeField] private GameObject ballPrefab; 
+    [SerializeField] private Transform spawnPoint;  
+    [SerializeField] private float throwSpeed; 
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -40,6 +44,11 @@ public class Movement : MonoBehaviour
     {
         UpdateMouse();
         UpdateMove();
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            ThrowBall();
+        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -96,6 +105,26 @@ public class Movement : MonoBehaviour
         if (isGrounded! && controller.velocity.y < -1f)
         {
             velocityY = -8f;
+        }
+    }
+
+    private void ThrowBall()
+    {
+        if (ballPrefab != null && spawnPoint != null)
+        {
+            GameObject ball = Instantiate(ballPrefab, spawnPoint.position, spawnPoint.rotation);
+
+            Rigidbody rb = ball.GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                rb = ball.AddComponent<Rigidbody>();
+            }
+
+            rb.velocity = spawnPoint.forward * throwSpeed;
+        }
+        else
+        {
+            Debug.LogWarning("BallPrefab oder SpawnPoint nicht zugewiesen!");
         }
     }
 }
