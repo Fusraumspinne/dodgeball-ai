@@ -26,6 +26,10 @@ public class Manager : MonoBehaviour
 
     [SerializeField] private List<GameObject> userInterface;
 
+    [SerializeField] private bool trainWalk;
+    [SerializeField] private bool trainAvoidWall;
+    [SerializeField] private bool trainDodge;
+
     void Timer()
     {
         isTraining = false;
@@ -93,7 +97,55 @@ public class Manager : MonoBehaviour
 
     private void CreateAgentsFromSavedNetwork()
     {
-        string filePath = Path.Combine(Application.persistentDataPath, "bestNeuralNetwork.json");
+        string savePath = "";
+
+        if (trainWalk)
+        {
+            savePath = "agentWalk.json";
+
+            if (!File.Exists(Path.Combine(Application.persistentDataPath, savePath)))
+            {
+                CreateAgentBodies();
+                return;
+            }
+        }
+        else if (trainAvoidWall)
+        {
+            savePath = "agentAvoidWall.json";
+
+            if (!File.Exists(Path.Combine(Application.persistentDataPath, savePath)))
+            {
+                savePath = "agentWalk.json";
+
+                if (!File.Exists(Path.Combine(Application.persistentDataPath, savePath)))
+                {
+                    CreateAgentBodies();
+                    return;
+                }
+            }
+        }
+        else if (trainDodge)
+        {
+            savePath = "agentDodge.json";
+
+            if (!File.Exists(Path.Combine(Application.persistentDataPath, savePath)))
+            {
+                savePath = "agentAvoidWall.json";
+
+                if (!File.Exists(Path.Combine(Application.persistentDataPath, savePath)))
+                {
+                    savePath = "agentWalk.json";
+
+                    if (!File.Exists(Path.Combine(Application.persistentDataPath, savePath)))
+                    {
+                        CreateAgentBodies();
+                        return;
+                    }
+                }
+            }
+        }
+
+        string filePath = Path.Combine(Application.persistentDataPath, savePath);
 
         if (!File.Exists(filePath))
         {
@@ -219,7 +271,23 @@ public class Manager : MonoBehaviour
             savedNetwork.layerArrays = layerArrays.ToArray();
 
             string json = JsonUtility.ToJson(savedNetwork, true);
-            string filePath = Path.Combine(Application.persistentDataPath, "bestNeuralNetwork.json");
+
+            string savePath = "";
+
+            if (trainWalk)
+            {
+                savePath = "agentWalk.json";
+            }
+            else if (trainAvoidWall)
+            {
+                savePath = "agentAvoidWall.json";
+            }
+            else if (trainDodge)
+            {
+                savePath = "agentDodge.json";
+            }
+
+            string filePath = Path.Combine(Application.persistentDataPath, savePath);
             File.WriteAllText(filePath, json);
         }
     }
