@@ -72,10 +72,10 @@ public class Agent : MonoBehaviour
             turnInput = Mathf.Clamp(output[1], -1f, 1f);
 
             float distanceFitness = Mathf.Clamp((distance <= 20.0f) ? Mathf.Exp(-distance / 10.0f) : -Mathf.Clamp01((distance - 20.0f) / 10.0f), -2f, 1f);
+            //float ballPenalty = Mathf.Clamp(dangerDir.magnitude, 0f, 1f);
+            //float dodgeFitness = 1f - Mathf.Clamp01(Mathf.Abs(inputs[9] * moveInput) + Mathf.Abs(inputs[10] * moveInput));
 
-            float dodgeFitness = (inputs[9] == 0) ? 0.5f : -0.25f;
-
-            net.AddFitness(1f - Mathf.Abs(inputs[0]) + distanceFitness + dodgeFitness);
+            net.AddFitness(1f - Mathf.Abs(inputs[0]) + distanceFitness);
 
             UpdateRotation();
             UpdateMove();
