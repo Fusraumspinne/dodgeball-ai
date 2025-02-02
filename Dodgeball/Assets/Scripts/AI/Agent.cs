@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Services.Analytics.Internal;
@@ -54,7 +55,7 @@ public class Agent : MonoBehaviour
             inputs[1] = Mathf.Clamp01(distance / 10.0f);
             for (int i = 0; i < vision.Length; i++)
             {
-                if (i + 2 >= 9)
+                if (i + 2 >= 11)
                 {
                     break;
                 }
@@ -62,18 +63,12 @@ public class Agent : MonoBehaviour
                 inputs[i + 2] = vision[i];
             }
 
-            Vector2 dangerDir = CheckIncomingBall();
-            inputs[9] = dangerDir.x;
-            inputs[10] = dangerDir.y;
-
             float[] output = net.FeedForward(inputs);
 
             moveInput = Mathf.Clamp(output[0], 0f, 1f);
             turnInput = Mathf.Clamp(output[1], -1f, 1f);
 
             float distanceFitness = Mathf.Clamp((distance <= 20.0f) ? Mathf.Exp(-distance / 10.0f) : -Mathf.Clamp01((distance - 20.0f) / 10.0f), -2f, 1f);
-            //float ballPenalty = Mathf.Clamp(dangerDir.magnitude, 0f, 1f);
-            //float dodgeFitness = 1f - Mathf.Clamp01(Mathf.Abs(inputs[9] * moveInput) + Mathf.Abs(inputs[10] * moveInput));
 
             net.AddFitness(1f - Mathf.Abs(inputs[0]) + distanceFitness);
 
@@ -81,35 +76,6 @@ public class Agent : MonoBehaviour
             UpdateMove();
         }
     }
-
-    private Vector2 CheckIncomingBall()
-    {
-        GameObject[] balls = GameObject.FindGameObjectsWithTag("Ball");
-        Vector2 dangerDirection = Vector2.zero;
-
-        foreach (GameObject ball in balls)
-        {
-            Rigidbody rb = ball.GetComponent<Rigidbody>();
-            if (rb == null) continue;
-
-            Vector3 ballPos = ball.transform.position;
-            Vector3 ballVelocity = rb.velocity;
-            Vector3 agentPos = transform.position;
-
-            float timeToImpact = Mathf.Abs((ballPos.z - agentPos.z) / (ballVelocity.z + 0.0001f));
-            Vector3 futureBallPos = ballPos + ballVelocity * timeToImpact;
-            float distanceToAgent = Vector3.Distance(futureBallPos, agentPos);
-
-            if (distanceToAgent < 15f)
-            {
-                Vector3 dir = (futureBallPos - agentPos).normalized;
-                dangerDirection += new Vector2(dir.x, dir.z) * (1f - (distanceToAgent / 15f));
-            }
-        }
-
-        return dangerDirection;
-    }
-
     void UpdateRotation()
     {
         float targetTurn = turnInput * mouseSensitivity;
@@ -140,8 +106,8 @@ public class Agent : MonoBehaviour
 
     private float[] PerformRaycastVision()
     {
-        float[] vision = new float[7];
-        float[] angles = { -90, -60, -30, 0, 30, 60, 90 };
+        float[] vision = new float[9];
+        float[] angles = { -60, -45, -30, -15, 0, 15, 30, 45, 60 };
 
         for (int i = 0; i < angles.Length; i++)
         {
@@ -160,11 +126,11 @@ public class Agent : MonoBehaviour
 
         if (Physics.Raycast(transform.position, direction, out hit, maxDistance, layerMask))
         {
-            Debug.DrawRay(transform.position, direction * hit.distance, Color.red); 
-            return hit.distance; 
+            Debug.DrawRay(transform.position, direction * hit.distance, Color.red);
+            return hit.distance;
         }
 
-        Debug.DrawRay(transform.position, direction * maxDistance, Color.green); 
+        Debug.DrawRay(transform.position, direction * maxDistance, Color.green);
         return maxDistance;
     }
 
